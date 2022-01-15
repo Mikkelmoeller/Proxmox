@@ -76,6 +76,9 @@ pushd $TEMP_DIR >/dev/null
 # Download setup script
 wget -qL https://raw.githubusercontent.com/tteck/Proxmox/main/ha_setup.sh
 
+# Download the static version of fuse-overlayfs
+wget -qL -O fuse-overlayfs https://github.com/containers/fuse-overlayfs/releases/download/v1.8/fuse-overlayfs-x86_64
+
 # Detect modules and automatically load at boot
 load_module overlay
 
@@ -148,7 +151,7 @@ fi
 ARCH=$(dpkg --print-architecture)
 HOSTNAME=homeassistant
 TEMPLATE_STRING="local:vztmpl/${TEMPLATE}"
-pct create $CTID $TEMPLATE_STRING -arch $ARCH -features nesting=1 \
+pct create $CTID $TEMPLATE_STRING -arch $ARCH -features fuse=1,keyctl=1,mknod=1,nesting=1 \
   -hostname $HOSTNAME -net0 name=eth0,bridge=vmbr0,ip=dhcp -onboot 1 -cores 2 -memory 2048 \
   -ostype $OSTYPE -rootfs $ROOTFS,size=$DISK_SIZE -storage $STORAGE >/dev/null
 
@@ -172,6 +175,7 @@ pct unmount $CTID && unset MOUNT
 # Setup container
 msg "Starting LXC container..."
 pct start $CTID
+pct push $CTID fuse-overlayfs /usr/local/bin/fuse-overlayfs -perms 755
 pct push $CTID ha_setup.sh /ha_setup.sh -perms 755
 pct exec $CTID /ha_setup.sh
 
