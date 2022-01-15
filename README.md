@@ -144,7 +144,7 @@ ________________________________________________________________________________
 To create a new Proxmox Home Assistant Container, run the following from Proxmox web shell.
 
 ```
-bash -c "$(wget -qLO - https://raw.githubusercontent.com/tteck/Proxmox/main/ha_container.sh)"
+bash -c "$(wget -qLO - https://raw.githubusercontent.com/mikkelmoeller/Proxmox/main/ha_container.sh)"
 ```
  
 <h3 align="center" id="heading">⚡ Default Settings:  2GB RAM - 8GB Storage - 2vCPU ⚡</h3>
